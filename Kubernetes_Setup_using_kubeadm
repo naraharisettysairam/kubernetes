@@ -7,8 +7,8 @@ This documentation guides you in setting up a cluster with one master node and t
 1. System Requirements 
     >Master: t2.medium (2 CPUs and 2GB Memory)   
     >Worker Nodes: t2.micro 
-
-1. Open Below ports in the Security Group. 
+    
+    1. Open Below ports in the Security Group. 
    #### Master node: 
     `6443  
     32750  
@@ -16,43 +16,43 @@ This documentation guides you in setting up a cluster with one master node and t
     4443  
     443  
     8080 `
-
-   ##### On Master node and Worker node:
-    `179`  
-
-   ### `On Master and Worker:`
+    
+    ##### On Master node and Worker node:
+     `179`
+     
+     ### `On Master and Worker:`
 1. Perform all the commands as root user unless otherwise specified
- 
-   Install, Enable and start docker service.
+
+Install, Enable and start docker service.
    Use the Docker repository to install docker.
    > If you use docker from CentOS OS repository, the docker version might be old to work with Kubernetes v1.13.0 and above
 
-   ```sh
+```sh
    yum install -y -q yum-utils device-mapper-persistent-data lvm2 > /dev/null 2>&1
    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null 2>&1
    yum install -y -q docker-ce >/dev/null 2>&1
    ```
-1. Start Docker services 
+   1. Start Docker services 
    ```sh
    systemctl enable docker
    systemctl start docker
    ```
-1. Disable SELinux
+   1. Disable SELinux
    ```sh
    setenforce 0
    sed -i --follow-symlinks 's/^SELINUX=enforcing/SELINUX=disabled/' /etc/sysconfig/selinux
    ```
-1. Disable Firewall
+   1. Disable Firewall
    ```sh
    systemctl disable firewalld
    systemctl stop firewalld
    ```
-1. Disable swap
+   1. Disable swap
      ```sh
      sed -i '/swap/d' /etc/fstab
      swapoff -a
     ```
-1. Update sysctl settings for Kubernetes networking
+    1. Update sysctl settings for Kubernetes networking
    ```sh
    cat >> /etc/sysctl.d/kubernetes.conf <<EOF
    net.bridge.bridge-nf-call-ip6tables = 1
@@ -60,7 +60,7 @@ This documentation guides you in setting up a cluster with one master node and t
    EOF
    sysctl --system
    ```
-## Kubernetes Setup
+   ## Kubernetes Setup
 1. Add yum repository for kubernetes packages 
     ```sh
     cat >>/etc/yum.repos.d/kubernetes.repo<<EOF
@@ -74,7 +74,7 @@ This documentation guides you in setting up a cluster with one master node and t
             https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
     EOF
     ```
-1. Install Kubernetes
+    1. Install Kubernetes
     ```sh
     yum install -y kubeadm-1.15.6-0.x86_64 kubelet-1.15.6-0.x86_64 kubectl-1.15.6-0.x86_64
     ```
@@ -83,7 +83,7 @@ This documentation guides you in setting up a cluster with one master node and t
     systemctl enable kubelet
     systemctl start kubelet
     ```
-## `On Master Node:`
+    ## `On Master Node:`
 1. Initialize Kubernetes Cluster
     ```sh
     kubeadm init --apiserver-advertise-address=<MasterServerIP> --pod-network-cidr=192.168.0.0/16
